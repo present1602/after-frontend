@@ -1,5 +1,5 @@
 function Bottombar() {
-  return <h1>Borrombar</h1>
+  return <h2>bottom bar</h2>
 }
 
 export default Bottombar
