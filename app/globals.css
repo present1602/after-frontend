@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .main-container {
-  @apply py-2 px-4 rounded-lg bg-blue-500 text-yellow-300;
-} */
-
 @layer components {
 
   /* main */

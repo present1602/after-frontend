@@ -1,4 +1,17 @@
+// import AccountProfile from '@/components/forms/AccountProfile'
 import Image from 'next/image'
+
+const userInfo = {
+  name: "cy",
+  profile_photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRny6M7SVLugIiTJGIYPcr744JSqVf5oPe1Vg&usqp=CAU",
+  bio: "cy intro",
+}
+const userData = {
+  id: "12341234",
+  name: userInfo ? userInfo?.name : "",
+  profile_photo: userInfo ? userInfo?.profile_photo : "",
+  bio: userInfo ? userInfo?.bio : "",
+}
 
 export default function Page() {
   return (
@@ -9,7 +22,9 @@ export default function Page() {
       </p>
 
       <section className='mt-9 bg-dark-2 p-10'>
+        {/* <AccountProfile user={userData} /> */}
       </section>
     </main>
   )
 }
+
