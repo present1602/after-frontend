@@ -1,4 +1,5 @@
 // import AccountProfile from '@/components/forms/AccountProfile'
+import AccountProfile from '@/components/forms/AccountProfile'
 import Image from 'next/image'
 
 const userInfo = {
@@ -9,7 +10,8 @@ const userInfo = {
 const userData = {
   id: "12341234",
   name: userInfo ? userInfo?.name : "",
-  profile_photo: userInfo ? userInfo?.profile_photo : "",
+  profile_photo: "",
+  // profile_photo: userInfo ? userInfo?.profile_photo : "",
   bio: userInfo ? userInfo?.bio : "",
 }
 
@@ -22,7 +24,7 @@ export default function Page() {
       </p>
 
       <section className='mt-9 bg-dark-2 p-10'>
-        {/* <AccountProfile user={userData} /> */}
+        <AccountProfile user={userData} />
       </section>
     </main>
   )
