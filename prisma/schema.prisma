@@ -11,10 +11,13 @@ model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   name       String?
+  nickname   String
   login_type String?
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+
+  @@map("users")
 }
 
 // model Profile {
