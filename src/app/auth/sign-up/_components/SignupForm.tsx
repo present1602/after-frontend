@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,6 +20,8 @@ const SignupForm = () => {
   //   },
   // });
 
+  const router = useRouter()
+
   const SignupFormSchema = z.object({
     email: z.string().min(10).max(50),
     nickname: z.string().min(2).max(50),
@@ -32,11 +35,31 @@ const SignupForm = () => {
       email: '',
       password: '',
       nickname: '',
-      gender: '',
+      gender: 'M',
     }
   })
 
   const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
+    debugger
+    const response = await fetch('/api/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+        nickname: values.nickname,
+        gender: values.gender,
+      })
+    })
+
+
+    if (response.ok) {
+      router.push('/auth/sign-in')
+    } else {
+      console.error('회원가입에 실패했습니다.')
+    }
 
   }
 
