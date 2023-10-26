@@ -1,5 +1,3 @@
-import { currentUser } from "@clerk/nextjs";
-
 
 
 async function RightSidebar() {

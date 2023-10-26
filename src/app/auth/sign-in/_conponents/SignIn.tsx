@@ -33,7 +33,7 @@ const SignIn = () => {
     if (signInData?.error) {
       console.log(signInData.error)
     } else {
-      router.push('/')
+      router.push('/mypage')
     }
     // const signInData = await fetch('/api/user/signin', {
     //   method: 'POST',

@@ -1,8 +1,13 @@
-import { OrganizationSwitcher, SignedIn, SignOutButton } from "@clerk/nextjs";
+import { getServerSession } from "next-auth";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import SignOutButton from "./SignOutButton";
+import SignInButton from "./SignInButton";
 
-function Topbar() {
+async function Topbar() {
+  const session = await getServerSession()
+
   return (
     <nav className='topbar'>
       <Link href='/' className='flex items-center gap-4'>
@@ -11,8 +16,15 @@ function Topbar() {
       </Link>
 
       <div className='flex items-center gap-1'>
-        <div className='block md:hidden'>
-          <div className='flex cursor-pointer'>
+        {
+          session?.user ?
+            <SignOutButton />
+            :
+            <SignInButton />
+        }
+        {/* <div className='block md:hidden'> */}
+        {/* <div className=''>
+          <div className='flex cursor-pointer' onClick={() => signOut()}>
             <Image
               src='/assets/logout.svg'
               alt='logout'
@@ -20,7 +32,7 @@ function Topbar() {
               height={24}
             />
           </div>
-        </div>
+        </div> */}
 
       </div>
     </nav>
