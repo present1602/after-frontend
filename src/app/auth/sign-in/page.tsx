@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from 'next/navigation'
 import SignIn from './_conponents/SignIn'
 
 const userInfo = {
@@ -16,6 +17,7 @@ const userData = {
 }
 
 export default function Page() {
+  const router = useRouter()
   return (
     <main className='mx-auto flex max-w-3xl flex-col justify-start px-10 py-20'>
       <h1 className='head-text'>로그인</h1>
@@ -26,6 +28,13 @@ export default function Page() {
       <section className='mt-9 bg-dark-2 p-10'>
         <SignIn />
       </section>
+
+      <p className='text-white p-2'>
+        아직 회원이 아니신가요?
+        <span
+          className='text-blue px-2 cursor-pointer'
+          onClick={() => { router.push('/auth/sign-up') }}>회원가입</span>
+      </p>
     </main>
   )
 }

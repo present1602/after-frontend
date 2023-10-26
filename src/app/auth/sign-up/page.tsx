@@ -2,6 +2,7 @@
 import AccountProfile from '@/components/forms/AccountProfile'
 import Image from 'next/image'
 import SignupForm from './_components/SignupForm'
+import { useRouter } from 'next/navigation'
 
 const userInfo = {
   name: "cy",
@@ -17,6 +18,8 @@ const userData = {
 }
 
 export default function Page() {
+  const router = useRouter()
+
   return (
     <main className='mx-auto flex max-w-3xl flex-col justify-start px-10 py-20'>
       <h1 className='head-text'>회원가입</h1>
@@ -27,6 +30,14 @@ export default function Page() {
       <section className='mt-9 bg-dark-2 p-10'>
         <SignupForm />
       </section>
+
+      <p className='text-white p-2'>
+        이미 회원이신가요?
+        <span
+          className='text-blue px-2 cursor-pointer'
+          onClick={() => { router.push('/auth/sign-in') }}>회원가입</span>
+      </p>
+
     </main>
 
   )
