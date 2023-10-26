@@ -4,8 +4,12 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
+  const router = useRouter()
+
   const formSchema = z.object({
     email: z.string().min(10).max(100),
     password: z.string().min(6).max(20),
@@ -19,13 +23,25 @@ const SignIn = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const response = await fetch('/api/user/signin', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password,
-      })
+    const signInData = await signIn('credentials', {
+      email: values.email,
+      password: values.password,
+      redirect: false
     })
+    console.log(signInData)
+
+    if (signInData?.error) {
+      console.log(signInData.error)
+    } else {
+      router.push('/')
+    }
+    // const signInData = await fetch('/api/user/signin', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     email: values.email,
+    //     password: values.password,
+    //   })
+    // })
   }
 
   return (
