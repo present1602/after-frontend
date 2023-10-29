@@ -33,6 +33,7 @@ const SignIn = () => {
     if (signInData?.error) {
       console.log(signInData.error)
     } else {
+      debugger;
       router.push('/mypage')
     }
     // const signInData = await fetch('/api/user/signin', {
