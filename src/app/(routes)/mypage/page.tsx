@@ -1,7 +1,7 @@
 "use client"
 
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { User, getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 
 const MyPage = () => {

@@ -8,25 +8,111 @@ datasource db {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  email          String   @unique
-  name           String?
-  nickname       String
-  gender         String?
-  password       String
-  login_type     String?  @default("email")
-  birth_date     String?
-  status         String   @default("active") // suspended, withdrawn, inactive
-  member_type    String   @default("10")
-  last_logged_in DateTime @default(now())
-  created_at     DateTime @default(now())
-  updated_at     DateTime @default(now())
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  password         String
+  nickname         String
+  role             String            @default("user")
+  name             String?
+  gender           String?
+  birth_date       String?
+  login_type       String?           @default("email")
+  status           String            @default("active") // suspended, withdrawn, inactive
+  member_type      String            @default("10")
+  last_logged_in   DateTime          @default(now())
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
+  memo             String?
+  Post             Post[]
+  Reply            Reply[]
+  PostLike         PostLike[]
+  UserProfileMedia UserProfileMedia?
 
   @@map("users")
 }
 
-// model Profile {
-//   id         Int     @id @default(autoincrement())
-//   gender     Int?
-//   birth_date String?
-// }
+model Post {
+  id             Int              @id @default(autoincrement())
+  author         User             @relation(fields: [author_id], references: [id])
+  author_id      Int
+  content        String?
+  tags           String?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  status         String           @default("active")
+  Reply          Reply[]
+  PostLike       PostLike[]
+  PostMediaImage PostMediaImage[]
+  PostMediaVideo PostMediaVideo?
+  memo           String?
+
+  @@map("post")
+}
+
+model UserProfileMedia {
+  id       Int   @id @default(autoincrement())
+  media    Media @relation(fields: [media_id], references: [id])
+  media_id Int   @unique
+  user     User  @relation(fields: [user_id], references: [id])
+  user_id  Int   @unique
+}
+
+model Reply {
+  id         Int      @id @default(autoincrement())
+  author     User     @relation(fields: [author_id], references: [id])
+  author_id  Int
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    Int
+  content    String?
+  tags       String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  memo       String?
+
+  @@map("reply")
+}
+
+model PostMediaImage {
+  id         Int      @id @default(autoincrement())
+  ord        Int      @default(0)
+  media      Media    @relation(fields: [media_id], references: [id])
+  media_id   Int      @unique
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    Int
+  created_at DateTime @default(now())
+}
+
+model PostMediaVideo {
+  id         Int      @id @default(autoincrement())
+  media      Media    @relation(fields: [media_id], references: [id])
+  media_id   Int      @unique
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    Int      @unique
+  created_at DateTime @default(now())
+}
+
+model Media {
+  id               Int               @id @default(autoincrement())
+  url              String
+  filename         String
+  type             String? // "video" || "image"
+  is_active        Boolean           @default(true)
+  created_at       DateTime          @default(now())
+  expired_at       DateTime          @default(now())
+  memo             String?
+  related_to       Json? // { table:'tablename', content_id: 'related table rowid'}
+  PostMediaImage   PostMediaImage?
+  PostMediaVideo   PostMediaVideo?
+  UserProfileMedia UserProfileMedia?
+
+  @@map("media")
+}
+
+model PostLike {
+  id         Int      @id @default(autoincrement())
+  post_id    Int
+  post       Post     @relation(fields: [post_id], references: [id])
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+}

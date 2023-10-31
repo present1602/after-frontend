@@ -40,7 +40,6 @@ const SignupForm = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
-    debugger
     const response = await fetch('/api/user', {
       method: 'POST',
       headers: {

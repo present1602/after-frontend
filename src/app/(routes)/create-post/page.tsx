@@ -14,7 +14,16 @@ const Page = () => {
 
   }, [])
 
-  return (<div>aaaa</div>)
+
+  return (
+    <div>
+      <h1 className="head-text">Create Post</h1>
+      {session?.user.id
+        ? <CreatePostForm userId={session?.user.id} />
+        : null
+      }
+    </div>
+  )
 }
 
 export default Page;
