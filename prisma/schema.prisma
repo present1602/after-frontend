@@ -32,19 +32,20 @@ model User {
 }
 
 model Post {
-  id             Int              @id @default(autoincrement())
-  author         User             @relation(fields: [author_id], references: [id])
-  author_id      Int
-  content        String?
-  tags           String?
-  created_at     DateTime         @default(now())
-  updated_at     DateTime         @default(now())
-  status         String           @default("active")
-  Reply          Reply[]
-  PostLike       PostLike[]
-  PostMediaImage PostMediaImage[]
-  PostMediaVideo PostMediaVideo?
-  memo           String?
+  id              Int              @id @default(autoincrement())
+  author          User             @relation(fields: [author_id], references: [id])
+  author_id       Int
+  content         String?
+  tags            String[]
+  mentioned_users String[]
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @default(now())
+  status          String           @default("active")
+  Reply           Reply[]
+  PostLike        PostLike[]
+  PostMediaImage  PostMediaImage[]
+  PostMediaVideo  PostMediaVideo?
+  memo            String?
 
   @@map("post")
 }
