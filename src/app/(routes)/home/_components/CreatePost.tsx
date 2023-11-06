@@ -1,4 +1,6 @@
 import { Button, Textarea } from "@/components/ui";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 
@@ -11,17 +13,36 @@ const usrSrc = "https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/s
 const CreatePost: React.FC<Props> = ({
   placeholder
 }) => {
-  const [body, setBody] = useState('')
+  const { data: session } = useSession()
+
+  const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const onSubmit = useCallback(async () => {
+  const onSubmit = async () => {
+    debugger
     try {
       setIsLoading(true)
-
+      await axios.post('/api/post/create', {
+        content: content,
+        userId: Number(session?.user.id)
+      })
+      // const res = await fetch(
+      //   '/api/post/create', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     content: content,
+      //     userId: 3,
+      //   })
+      // }
+      // )
+      // setContent('')
     } catch (error) {
-
+      console.log(error)
     }
 
-  }, [])
+  }
 
   return (
     <div className="border-b-[1px] border-gray-500 py-2">
@@ -42,8 +63,8 @@ const CreatePost: React.FC<Props> = ({
 
         <div className="w-full flex flex-col">
           <textarea
-            onChange={(event) => setBody(event.target.value)}
-            value={body}
+            onChange={(event) => setContent(event.target.value)}
+            value={content}
             className="
                 disabled:opacity-80
                 resize-none 
