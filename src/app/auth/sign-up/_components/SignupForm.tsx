@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,6 +28,7 @@ const SignupForm = () => {
     nickname: z.string().min(2).max(50),
     password: z.string().min(6).max(20),
     gender: z.string().min(1).max(1),
+    birth_date: z.string().min(6).max(6).regex(/^[0-9]*$/)
   })
 
   const form = useForm<z.infer<typeof SignupFormSchema>>({
@@ -36,6 +38,7 @@ const SignupForm = () => {
       password: '',
       nickname: '',
       gender: 'M',
+      birth_date: '',
     }
   })
 
@@ -50,10 +53,11 @@ const SignupForm = () => {
         password: values.password,
         nickname: values.nickname,
         gender: values.gender,
+        birth_date: values.birth_date,
       })
     })
 
-
+    debugger
     if (response.ok) {
       router.push('/auth/sign-in')
     } else {
@@ -63,7 +67,6 @@ const SignupForm = () => {
   }
 
   return (
-    // <div>aa</div>
     <Form {...form}>
       <form
         className='flex flex-col justify-start gap-10'
@@ -136,6 +139,28 @@ const SignupForm = () => {
           }
         />
         <FormField
+          name="birth_date"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className='flex w-full flex-col gap-3'>
+              <FormLabel className='text-base-semibold text-light-2'
+              >
+                생년월일 6자리
+              </FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="생년월일 6자리를 입력해주세요"
+                  type='text'
+                  className='account-form_input no-focus'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )
+          }
+        />
+        <FormField
           name="gender"
           control={form.control}
           render={({ field }) => (
@@ -146,12 +171,12 @@ const SignupForm = () => {
               </FormLabel>
               <div className="grid grid-cols-2">
                 <label>
-                  <input type="radio" name="gender" value="M" checked={true} className="hidden peer"
-                    onChange={() => { }}
+                  <input type="radio" name="gender" value="M" className="hidden peer"
                   />
                   <div className="flex items-center justify-center
                 rounded-md py-2 
-                peer-checked:border-2 text-white">남자</div>
+                peer-checked:border-2 text-white"
+                  >남자</div>
                 </label>
                 <label>
                   <input type="radio" name="gender" value="F" className="hidden peer" />

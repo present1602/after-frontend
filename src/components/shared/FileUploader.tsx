@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { Button } from "@/components/ui";
 // import { convertFileToUrl } from "@/lib/utils";
@@ -11,6 +11,7 @@ type FileUploaderProps = {
 const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
   const [file, setFile] = useState<File[]>([]);
   const [fileUrl, setFileUrl] = useState<string>(mediaUrl);
+  const inputFile: any = useRef()
 
   // const onDrop = useCallback(
   //   (acceptedFiles: FileWithPath[]) => {
@@ -20,6 +21,10 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
   //   },
   //   [file]
   // );
+
+  const handleFileChange = (e: any) => {
+
+  }
 
   return (
     <div
@@ -46,6 +51,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
           <Button type="button" className="shad-button_dark_4">
             Select from computer
           </Button>
+          <input type="file" ref={inputFile} onChange={handleFileChange} />
         </div>
       )}
     </div>

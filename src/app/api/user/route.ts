@@ -1,13 +1,13 @@
-import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { email, nickname, password, gender } = body;
+    const { email, nickname, password, gender, birth_date } = body;
 
-    const existingUserByEmail = await db.user.findUnique({
+    const existingUserByEmail = await prisma.user.findUnique({
       where: { email: email }
     })
 
@@ -17,12 +17,13 @@ export async function POST(req: Request) {
 
     const hashedPasswrd = await hash(password, 10)
 
-    const newUser = await db.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPasswrd,
         nickname,
         gender,
+        birth_date
       }
     })
 

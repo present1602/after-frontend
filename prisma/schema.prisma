@@ -8,25 +8,25 @@ datasource db {
 }
 
 model User {
-  id               Int               @id @default(autoincrement())
-  email            String            @unique
+  id               Int                @id @default(autoincrement())
+  email            String             @unique
   password         String
   nickname         String
-  role             String            @default("user")
+  role             String             @default("user")
   name             String?
   gender           String?
   birth_date       String?
-  login_type       String?           @default("email")
-  status           String            @default("active") // suspended, withdrawn, inactive
-  member_type      String            @default("10")
-  last_logged_in   DateTime          @default(now())
-  created_at       DateTime          @default(now())
-  updated_at       DateTime          @default(now())
+  login_type       String?            @default("email")
+  status           String             @default("active") // suspended, withdrawn, inactive
+  member_type      String             @default("10")
+  last_logged_in   DateTime           @default(now())
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now())
   memo             String?
   Post             Post[]
   Reply            Reply[]
   PostLike         PostLike[]
-  UserProfileMedia UserProfileMedia?
+  UserProfileImage UserProfileImage[]
 
   @@map("users")
 }
@@ -50,12 +50,18 @@ model Post {
   @@map("post")
 }
 
-model UserProfileMedia {
-  id       Int   @id @default(autoincrement())
-  media    Media @relation(fields: [media_id], references: [id])
-  media_id Int   @unique
-  user     User  @relation(fields: [user_id], references: [id])
-  user_id  Int   @unique
+model UserProfileImage {
+  id         Int      @id @default(autoincrement())
+  url        String
+  filename   String
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  expired_at DateTime @default(now())
+  memo       String?
+  user       User     @relation(references: [id], fields: [userId])
+  userId     Int
+
+  @@map("user_profile_image")
 }
 
 model Reply {
@@ -81,6 +87,8 @@ model PostMediaImage {
   post       Post     @relation(fields: [post_id], references: [id])
   post_id    Int
   created_at DateTime @default(now())
+
+  @@map("post_media_image")
 }
 
 model PostMediaVideo {
@@ -90,21 +98,22 @@ model PostMediaVideo {
   post       Post     @relation(fields: [post_id], references: [id])
   post_id    Int      @unique
   created_at DateTime @default(now())
+
+  @@map("post_media_video")
 }
 
 model Media {
-  id               Int               @id @default(autoincrement())
-  url              String
-  filename         String
-  type             String? // "video" || "image"
-  is_active        Boolean           @default(true)
-  created_at       DateTime          @default(now())
-  expired_at       DateTime          @default(now())
-  memo             String?
-  related_to       Json? // { table:'tablename', content_id: 'related table rowid'}
-  PostMediaImage   PostMediaImage?
-  PostMediaVideo   PostMediaVideo?
-  UserProfileMedia UserProfileMedia?
+  id             Int             @id @default(autoincrement())
+  url            String
+  filename       String
+  type           String? // "video" || "image"
+  is_active      Boolean         @default(true)
+  created_at     DateTime        @default(now())
+  expired_at     DateTime        @default(now())
+  memo           String?
+  related_to     Json? // { table:'tablename', content_id: 'related table rowid'}
+  PostMediaImage PostMediaImage?
+  PostMediaVideo PostMediaVideo?
 
   @@map("media")
 }
@@ -116,4 +125,6 @@ model PostLike {
   user_id    Int
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
+
+  @@map("post_like")
 }

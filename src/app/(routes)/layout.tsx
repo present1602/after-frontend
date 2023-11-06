@@ -23,11 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Topbar />
-          <main className='flex flex-row'>
+          <main className='flex'> {/* flex h-screen? */}
+            <Topbar />
             <LeftSidebar />
             <section className='main-container'>
-              <div className='w-full max-w-4xl'>
+              <div className='w-full max-w-3xl items-center'>
                 {children}
               </div>
             </section>

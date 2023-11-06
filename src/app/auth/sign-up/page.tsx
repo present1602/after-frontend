@@ -1,4 +1,5 @@
-// import AccountProfile from '@/components/forms/AccountProfile'
+"use client"
+
 import AccountProfile from '@/components/forms/AccountProfile'
 import Image from 'next/image'
 import SignupForm from './_components/SignupForm'

@@ -23,6 +23,7 @@ const SignIn = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    debugger
     const signInData = await signIn('credentials', {
       email: values.email,
       password: values.password,
