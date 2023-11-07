@@ -12,22 +12,35 @@ export async function GET(req: Request) {
     skip: 0 + (page - 1) * 20,
     take: 20,
     orderBy: { created_at: "desc" },
-    include: {
-      PostMediaImage: {
+    select: {
+      content: true,
+      tags: true,
+      created_at: true,
+      post_media_image: {
         orderBy: { ord: "asc" },
-        include: {
+        select: {
+          ord: true,
           media: {
             select: {
-              filename: true,
-              url: true,
-            },
-          },
-        },
+              url: true
+            }
+          }
+        }
       },
+      author: {
+        select: {
+          nickname: true,
+          role: true,
+          user_profile_image: {
+            select: {
+              url: true
+            }
+          }
+        }
+      }
     }
   });
 
   return NextResponse.json({ data: posts }, { status: 200 });
 
-  // return posts;
 };

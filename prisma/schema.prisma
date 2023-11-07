@@ -8,44 +8,44 @@ datasource db {
 }
 
 model User {
-  id               Int                @id @default(autoincrement())
-  email            String             @unique
-  password         String
-  nickname         String
-  role             String             @default("user")
-  name             String?
-  gender           String?
-  birth_date       String?
-  login_type       String?            @default("email")
-  status           String             @default("active") // suspended, withdrawn, inactive
-  member_type      String             @default("10")
-  last_logged_in   DateTime           @default(now())
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @default(now())
-  memo             String?
-  Post             Post[]
-  Reply            Reply[]
-  PostLike         PostLike[]
-  UserProfileImage UserProfileImage[]
+  id                 Int                @id @default(autoincrement())
+  email              String             @unique
+  password           String
+  nickname           String
+  role               String             @default("user")
+  name               String?
+  gender             String?
+  birth_date         String?
+  login_type         String?            @default("email")
+  status             String             @default("active") // suspended, withdrawn, inactive
+  member_type        String             @default("10")
+  last_logged_in     DateTime           @default(now())
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @default(now())
+  memo               String?
+  post               Post[]
+  reply              Reply[]
+  post_like          PostLike[]
+  user_profile_image UserProfileImage[]
 
   @@map("users")
 }
 
 model Post {
-  id              Int              @id @default(autoincrement())
-  author          User             @relation(fields: [author_id], references: [id])
-  author_id       Int
-  content         String?
-  tags            String[]
-  mentioned_users String[]
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @default(now())
-  status          String           @default("active")
-  Reply           Reply[]
-  PostLike        PostLike[]
-  PostMediaImage  PostMediaImage[]
-  PostMediaVideo  PostMediaVideo?
-  memo            String?
+  id               Int              @id @default(autoincrement())
+  author           User             @relation(fields: [author_id], references: [id])
+  author_id        Int
+  content          String?
+  tags             String[]
+  mentioned_users  String[]
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @default(now())
+  status           String           @default("active")
+  reply            Reply[]
+  post_like        PostLike[]
+  post_media_image PostMediaImage[]
+  post_media_video PostMediaVideo?
+  memo             String?
 
   @@map("post")
 }
@@ -58,8 +58,8 @@ model UserProfileImage {
   created_at DateTime @default(now())
   expired_at DateTime @default(now())
   memo       String?
-  user       User     @relation(references: [id], fields: [userId])
-  userId     Int
+  user       User     @relation(references: [id], fields: [user_id])
+  user_id    Int
 
   @@map("user_profile_image")
 }
@@ -103,17 +103,17 @@ model PostMediaVideo {
 }
 
 model Media {
-  id             Int             @id @default(autoincrement())
-  url            String
-  filename       String
-  type           String? // "video" || "image"
-  is_active      Boolean         @default(true)
-  created_at     DateTime        @default(now())
-  expired_at     DateTime        @default(now())
-  memo           String?
-  related_to     Json? // { table:'tablename', content_id: 'related table rowid'}
-  PostMediaImage PostMediaImage?
-  PostMediaVideo PostMediaVideo?
+  id               Int             @id @default(autoincrement())
+  url              String
+  filename         String
+  type             String? // "video" || "image"
+  is_active        Boolean         @default(true)
+  created_at       DateTime        @default(now())
+  expired_at       DateTime        @default(now())
+  memo             String?
+  related_to       Json? // { table:'tablename', content_id: 'related table rowid'}
+  post_media_image PostMediaImage?
+  post_media_video PostMediaVideo?
 
   @@map("media")
 }
