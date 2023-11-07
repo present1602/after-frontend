@@ -34,11 +34,11 @@ const LeftSidebar = () => {
               <Image
                 src={link.imgURL}
                 alt={link.label}
-                width={24}
-                height={24}
+                width={20}
+                height={20}
               />
 
-              <p className='text-light-1 max-lg:hidden'>{link.label}</p>
+              <p className='text-light-1 text-small-regular max-lg:hidden'>{link.label}</p>
             </Link>
           );
         })}

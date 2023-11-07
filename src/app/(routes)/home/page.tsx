@@ -4,6 +4,7 @@ import axios from "axios";
 import CreatePost from "./_components/CreatePost";
 import { prisma } from "@/lib/db";
 import { useEffect, useState } from "react";
+import PostCard from "./_components/PostCard";
 
 
 
@@ -38,12 +39,13 @@ const Home = () => {
   // setBeers((prevProducts: Beer[]) => [...prevProducts, ...newProducts]);
   return (
     <div className="w-full">
+
+      <CreatePost placeholder="" />
       {
         posts.length > 0 && posts.map((post: any) => {
-          return <div key={Math.random()}>{JSON.stringify(post)}</div>
+          return <PostCard key={Math.random()} post={post} />
         })
       }
-      <CreatePost placeholder="" />
     </div>
 
   );

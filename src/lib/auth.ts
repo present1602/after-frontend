@@ -26,7 +26,25 @@ export const authOptions: NextAuthOptions = {
           return null
         }
         const existingUser = await prisma.user.findUnique({
-          where: { email: credentials?.email }
+          where: { email: credentials?.email },
+          select: {
+            id: true,
+            email: true,
+            nickname: true,
+            password: true,
+            user_profile_image: {
+              where: {
+                is_active: true
+              },
+              orderBy: {
+                created_at: "desc",
+              },
+              take: 1,
+              select: {
+                url: true
+              }
+            }
+          }
         });
         if (!existingUser) {
           return null
@@ -42,6 +60,7 @@ export const authOptions: NextAuthOptions = {
           id: `${existingUser.id}`,
           email: existingUser.email,
           nickname: existingUser.nickname,
+          profile_img: existingUser.user_profile_image[0]
         }
       }
     })
@@ -52,12 +71,14 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           nickname: user.nickname,
-          id: user.id
+          id: user.id,
         }
       }
       return token
     },
     async session({ session, user, token }) {
+      // session.user.profile_img = user.user_profile_image[0].url;
+
       return {
         ...session,
         user: {

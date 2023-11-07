@@ -32,6 +32,13 @@ export async function GET(req: Request) {
           nickname: true,
           role: true,
           user_profile_image: {
+            where: {
+              is_active: true
+            },
+            orderBy: {
+              created_at: "desc",
+            },
+            take: 1,
             select: {
               url: true
             }

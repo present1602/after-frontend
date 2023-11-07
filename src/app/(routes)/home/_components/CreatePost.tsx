@@ -60,6 +60,14 @@ const CreatePost: React.FC<Props> = ({
             alt="Avatar"
             src={usrSrc}
           />
+          {/* <img
+            src={
+              session?.user.user_profile_image.url ||
+              "/assets/icons/profile-placeholder.svg"
+            }
+            alt="creator"
+            className="w-12 lg:h-12 rounded-full"
+          /> */}
         </div>
 
         <div className="w-full flex flex-col">
@@ -80,6 +88,7 @@ const CreatePost: React.FC<Props> = ({
               "
             placeholder="질문, 팁, 정보, 피드 등 콘텐츠를 자유롭게 올려주세요">
           </textarea>
+          <p>{JSON.stringify(session?.user)}</p>
           <div className="mt-4 flex flex-row">
             <div className="flex flex-1 gap-5">
               <img alt="add-image" src="/assets/icons/file-upload.svg" width={40} height={40} />
