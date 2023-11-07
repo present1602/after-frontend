@@ -1,3 +1,5 @@
+"use client"
+
 import { Button, Textarea } from "@/components/ui";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -16,15 +18,14 @@ const CreatePost: React.FC<Props> = ({
   const { data: session } = useSession()
 
   const [content, setContent] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const onSubmit = async () => {
     debugger
     try {
-      setIsLoading(true)
       await axios.post('/api/post/create', {
         content: content,
         userId: Number(session?.user.id)
       })
+
       // const res = await fetch(
       //   '/api/post/create', {
       //   method: 'POST',
