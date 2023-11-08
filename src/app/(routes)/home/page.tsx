@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import CreatePost from "./_components/CreatePost";
-import { prisma } from "@/lib/db";
 import { useEffect, useState } from "react";
 import PostCard from "./_components/PostCard";
 

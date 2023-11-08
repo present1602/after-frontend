@@ -6,17 +6,74 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import AWS from "aws-sdk"
 
 interface Props {
   placeholder: string;
 }
 
+interface remoteFile {
+  filename: string,
+  url: string,
+  ord: number,
+}
+
+async function uploadFile(file: File): Promise<void> {
+  const S3_BUCKET = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
+  const REGION = process.env.NEXT_PUBLIC_AWS_S3_REGION;
+
+  AWS.config.update({
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+  });
+  const s3 = new AWS.S3({
+    params: { Bucket: S3_BUCKET },
+    region: REGION,
+  });
+
+  const params: any = {
+    Bucket: S3_BUCKET,
+    Key: `${Math.random() + file.name}`,
+    Body: file,
+  };
+
+  try {
+    const upload: any = s3.putObject(params);
+
+    upload.on("httpUploadProgress", (evt: any) => {
+      console.log(
+        `Uploading ${(evt.loaded * 100) / evt.total}%`
+      );
+    });
+
+    await upload.promise();
+    console.log("File uploaded successfully.");
+  } catch (err) {
+    console.error(err);
+  }
+
+  // var upload = s3
+  //   .putObject(params)
+  //   .on("httpUploadProgress", (evt: any) => {
+  //     console.log(
+  //       `Uploading ${(evt.loaded * 100) / evt.total}%`
+  //     );
+  //   })
+  //   .promise();
+
+  // await upload.then((err, data) => {
+  //   console.log(err);
+  //   alert("File uploaded successfully.");
+  // });
+};
 
 const CreatePost: React.FC<Props> = ({
   placeholder
 }) => {
   const { data: session } = useSession()
   const [content, setContent] = useState('')
+  const [fileData, setFileData] = useState<remoteFile[]>([])
+
   const inputFileRef: React.RefObject<HTMLInputElement> = useRef(null)
 
   const onSubmit = async () => {
@@ -46,7 +103,33 @@ const CreatePost: React.FC<Props> = ({
   }
 
   function handleFileButton() {
+    if (fileData.length > 3) {
+      alert("이미지 파일은 최대 4장까지 업로드 가능합니다.")
+      return;
+    }
     inputFileRef.current!.click()
+  }
+
+  function handleFileInputChange(e: any) {
+    const selectedFiles = e.target.files
+    if (selectedFiles.length > 4) {
+      alert("이미지 파일은 최대 4장까지 업로드 가능합니다.")
+      return;
+    }
+    if (fileData.length + selectedFiles > 4) {
+      alert("이미지 파일은 최대 4장까지 업로드 가능합니다.")
+      return;
+    }
+    debugger
+    // selectedFiles.map((file: any) => {
+    //   uploadFile(file)
+    // })
+    for (const file of selectedFiles) {
+      uploadFile(file)
+    }
+    /*
+    case1: fileData.length == 0  
+    */
   }
 
   return (
@@ -92,7 +175,9 @@ const CreatePost: React.FC<Props> = ({
                 width={40} height={40}
                 onClick={handleFileButton}
               />
-              <input type="file" className="hidden" ref={inputFileRef} />
+              <input type="file" className="hidden" ref={inputFileRef}
+                onChange={handleFileInputChange}
+              />
 
               {/* <img alt="add-video" src="/assets/icons/file-upload.svg" width={40} height={40} /> */}
             </div>
