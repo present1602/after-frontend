@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "./db";
 import { compare } from "bcrypt";
+import { defaultProfileImageUrl } from "@/constants";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -60,24 +61,26 @@ export const authOptions: NextAuthOptions = {
           id: `${existingUser.id}`,
           email: existingUser.email,
           nickname: existingUser.nickname,
-          profile_img: existingUser.user_profile_image[0]
+          profile_img: existingUser.user_profile_image[0]?.url ? existingUser.user_profile_image[0].url : defaultProfileImageUrl
         }
       }
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
+      console.log("jwt user: ", user)
+      debugger
       if (user) {
         return {
           ...token,
           nickname: user.nickname,
           id: user.id,
+          profile_img: user.profile_img
         }
       }
       return token
     },
     async session({ session, user, token }) {
-      // session.user.profile_img = user.user_profile_image[0].url;
 
       return {
         ...session,
@@ -85,6 +88,7 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
           nickname: token.nickname,
           id: token.id,
+          profile_img: token.profile_img,
         }
       }
     }

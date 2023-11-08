@@ -36,7 +36,7 @@ export default function Page() {
         이미 회원이신가요?
         <span
           className='text-blue px-2 cursor-pointer'
-          onClick={() => { router.push('/auth/sign-in') }}>회원가입</span>
+          onClick={() => { router.push('/auth/sign-in') }}>로그인</span>
       </p>
 
     </main>

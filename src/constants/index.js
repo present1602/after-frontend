@@ -21,5 +21,6 @@ export const sidebarLinks = [
   },
 ];
 
+export const defaultProfileImageUrl = "https://s3.ap-northeast-2.amazonaws.com/biz.after.bucket/profile_default.jpeg"
 
 

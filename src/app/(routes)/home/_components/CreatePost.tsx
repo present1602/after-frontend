@@ -1,6 +1,7 @@
 "use client"
 
 import { Button, Textarea } from "@/components/ui";
+import { defaultProfileImageUrl } from "@/constants";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -10,7 +11,6 @@ interface Props {
   placeholder: string;
 }
 
-const usrSrc = "https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-3.jpg"
 
 const CreatePost: React.FC<Props> = ({
   placeholder
@@ -19,7 +19,6 @@ const CreatePost: React.FC<Props> = ({
 
   const [content, setContent] = useState('')
   const onSubmit = async () => {
-    debugger
     try {
       await axios.post('/api/post/create', {
         content: content,
@@ -58,7 +57,7 @@ const CreatePost: React.FC<Props> = ({
               borderRadius: '100%'
             }}
             alt="Avatar"
-            src={usrSrc}
+            src={defaultProfileImageUrl}
           />
           {/* <img
             src={
@@ -70,7 +69,7 @@ const CreatePost: React.FC<Props> = ({
           /> */}
         </div>
 
-        <div className="w-full flex flex-col">
+        <div className="flex flex-1 flex-col">
           <textarea
             onChange={(event) => setContent(event.target.value)}
             value={content}
@@ -83,7 +82,7 @@ const CreatePost: React.FC<Props> = ({
                 ring-0 
                 outline-none 
                 text-[20px] 
-                placeholder-gray-500 
+                placeholder-gray-500
                 text-white
               "
             placeholder="질문, 팁, 정보, 피드 등 콘텐츠를 자유롭게 올려주세요">
@@ -92,7 +91,7 @@ const CreatePost: React.FC<Props> = ({
           <div className="mt-4 flex flex-row">
             <div className="flex flex-1 gap-5">
               <img alt="add-image" src="/assets/icons/file-upload.svg" width={40} height={40} />
-              <img alt="add-video" src="/assets/icons/file-upload.svg" width={40} height={40} />
+              {/* <img alt="add-video" src="/assets/icons/file-upload.svg" width={40} height={40} /> */}
             </div>
             <Button onClick={onSubmit}
               className="bg-primary-500"

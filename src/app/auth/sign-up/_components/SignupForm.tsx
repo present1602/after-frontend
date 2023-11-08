@@ -24,11 +24,11 @@ const SignupForm = () => {
   const router = useRouter()
 
   const SignupFormSchema = z.object({
-    email: z.string().min(10).max(50),
-    nickname: z.string().min(2).max(50),
-    password: z.string().min(6).max(20),
-    gender: z.string().min(1).max(1),
-    birth_date: z.string().min(6).max(6).regex(/^[0-9]*$/)
+    email: z.string().min(1, '이메일아이디를 입력해주세요').email('이메일을 올바르게 입력해주세요').max(100, '제한 글자수를 초과했습니다'),
+    password: z.string().min(1, '비밀번호를 입력해주세요').min(6, '비밀번호는 6자~20자 이하로 입력 가능합니다.').max(20, '비밀번호는 6자~20자 이하로 입력 가능합니다.'),
+    nickname: z.string().min(1, '닉네임을 입력해주세요').min(2, '닉네임은 2자 이상 12자 이하로 입력 가능합니다.').max(12, '닉네임은 2자 이상 12자 이하로 입력 가능합니다.'),
+    gender: z.string().min(1, '성별을 선택해주세요').max(1, '성별을 선택해주세요'),
+    birth_date: z.string().min(1, '생년월일 6자리를 입력해주세요').min(6, '생년월일 6자리를 올바르게 입력해주세요').max(6, '생년월일 6자리를 올바르게 입력해주세요').regex(/^[0-9]*$/, '생년월일 6자리를 올바르게 입력해주세요')
   })
 
   const form = useForm<z.infer<typeof SignupFormSchema>>({
@@ -37,7 +37,7 @@ const SignupForm = () => {
       email: '',
       password: '',
       nickname: '',
-      gender: 'M',
+      gender: '',
       birth_date: '',
     }
   })
@@ -57,7 +57,6 @@ const SignupForm = () => {
       })
     })
 
-    debugger
     if (response.ok) {
       router.push('/auth/sign-in')
     } else {

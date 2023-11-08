@@ -11,8 +11,8 @@ const SignIn = () => {
   const router = useRouter()
 
   const formSchema = z.object({
-    email: z.string().min(10).max(100),
-    password: z.string().min(6).max(20),
+    email: z.string().min(1, '이메일아이디를 입력해주세요').email('이메일을 올바르게 입력해주세요').max(100, '제한 글자수를 초과했습니다'),
+    password: z.string().min(1, '비밀번호를 입력해주세요').min(6, '비밀번호는 6자~20자 이하로 입력 가능합니다.').max(20, '비밀번호는 6자~20자 이하로 입력 가능합니다.'),
   })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -23,7 +23,6 @@ const SignIn = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    debugger
     const signInData = await signIn('credentials', {
       email: values.email,
       password: values.password,
