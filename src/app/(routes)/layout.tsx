@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../globals.css'
-import Topbar from '@/components/shared/Topbar'
-import LeftSidebar from '@/components/shared/LeftSidebar'
-import Bottombar from '@/components/shared/Bottombar'
-import RightSidebar from '@/components/shared/RightSidebar'
+import Topbar from '@/components/layout/Topbar'
+import LeftSidebar from '@/components/layout/LeftSidebar'
+import Bottombar from '@/components/layout/Bottombar'
+import RightSidebar from '@/components/layout/RightSidebar'
 import AuthProvider from '../context/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })

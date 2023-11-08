@@ -5,7 +5,7 @@ import { defaultProfileImageUrl } from "@/constants";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 interface Props {
   placeholder: string;
@@ -16,8 +16,9 @@ const CreatePost: React.FC<Props> = ({
   placeholder
 }) => {
   const { data: session } = useSession()
-
   const [content, setContent] = useState('')
+  const inputFileRef: React.RefObject<HTMLInputElement> = useRef(null)
+
   const onSubmit = async () => {
     try {
       await axios.post('/api/post/create', {
@@ -44,6 +45,10 @@ const CreatePost: React.FC<Props> = ({
 
   }
 
+  function handleFileButton() {
+    inputFileRef.current!.click()
+  }
+
   return (
     <div className="border-b-[1px] border-gray-500 py-2">
       <div className="flex flex-row gap-4">
@@ -57,16 +62,8 @@ const CreatePost: React.FC<Props> = ({
               borderRadius: '100%'
             }}
             alt="Avatar"
-            src={defaultProfileImageUrl}
+            src={session?.user.profile_img || defaultProfileImageUrl}
           />
-          {/* <img
-            src={
-              session?.user.user_profile_image.url ||
-              "/assets/icons/profile-placeholder.svg"
-            }
-            alt="creator"
-            className="w-12 lg:h-12 rounded-full"
-          /> */}
         </div>
 
         <div className="flex flex-1 flex-col">
@@ -87,10 +84,16 @@ const CreatePost: React.FC<Props> = ({
               "
             placeholder="질문, 팁, 정보, 피드 등 콘텐츠를 자유롭게 올려주세요">
           </textarea>
-          <p>{JSON.stringify(session?.user)}</p>
+
           <div className="mt-4 flex flex-row">
             <div className="flex flex-1 gap-5">
-              <img alt="add-image" src="/assets/icons/file-upload.svg" width={40} height={40} />
+              <img alt="add-image"
+                src="/assets/icons/file-upload.svg"
+                width={40} height={40}
+                onClick={handleFileButton}
+              />
+              <input type="file" className="hidden" ref={inputFileRef} />
+
               {/* <img alt="add-video" src="/assets/icons/file-upload.svg" width={40} height={40} /> */}
             </div>
             <Button onClick={onSubmit}

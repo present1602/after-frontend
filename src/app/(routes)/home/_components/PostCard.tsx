@@ -35,12 +35,16 @@ const PostCard = ({ post }: any) => {
         {/* <Link
           to={`/update-post/${post.id}`}
           className={`${session?.user.id !== post.author_id && "hidden"}`}> */}
-        <img
-          src={"/assets/icons/edit.svg"}
-          alt="edit"
-          width={20}
-          height={20}
-        />
+        {session?.user.id == post.author.id &&
+          <div>
+            <img
+              src={"/assets/icons/edit.svg"}
+              alt="edit"
+              width={20}
+              height={20}
+            />
+          </div>
+        }
         {/* </Link> */}
       </div>
 

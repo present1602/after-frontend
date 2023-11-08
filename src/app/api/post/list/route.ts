@@ -29,6 +29,7 @@ export async function GET(req: Request) {
       },
       author: {
         select: {
+          id: true,
           nickname: true,
           role: true,
           user_profile_image: {
