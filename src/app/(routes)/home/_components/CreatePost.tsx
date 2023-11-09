@@ -6,7 +6,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
@@ -110,6 +110,10 @@ const CreatePost: React.FC<Props> = ({
     }
   }
 
+  function removeFile(idx: number) {
+    setFileData(fileData.filter((el, index) => index != idx))
+  }
+
   return (
     <div className="border-b-[1px] border-gray-500 py-2">
       <h1>{JSON.stringify(fileData)}</h1>
@@ -146,7 +150,20 @@ const CreatePost: React.FC<Props> = ({
               "
             placeholder="질문, 팁, 정보, 피드 등 콘텐츠를 자유롭게 올려주세요">
           </textarea>
-
+          <div className="flex flex-col gap-4">
+            {
+              fileData.length > 0 && fileData.map((el: any, idx: number) => {
+                return (
+                  <div className="w-full relative" key={el.url}>
+                    <img src="/assets/icons/close.svg" className="absolute top-3 right-3" width={32}
+                      onClick={() => removeFile(idx)}
+                    />
+                    <img src={el.url} className="w-full" />
+                  </div>
+                );
+              })
+            }
+          </div>
           <div className="mt-4 flex flex-row">
             <div className="flex flex-1 gap-5">
               <img alt="add-image"
