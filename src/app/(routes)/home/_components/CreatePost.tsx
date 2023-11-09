@@ -2,11 +2,12 @@
 
 import { Button, Textarea } from "@/components/ui";
 import { defaultProfileImageUrl } from "@/constants";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
-import AWS from "aws-sdk"
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   placeholder: string;
@@ -15,57 +16,7 @@ interface Props {
 interface remoteFile {
   filename: string,
   url: string,
-  ord: number,
 }
-
-async function uploadFile(file: File): Promise<void> {
-  const S3_BUCKET = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
-  const REGION = process.env.NEXT_PUBLIC_AWS_S3_REGION;
-
-  AWS.config.update({
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  });
-  const s3 = new AWS.S3({
-    params: { Bucket: S3_BUCKET },
-    region: REGION,
-  });
-
-  const params: any = {
-    Bucket: S3_BUCKET,
-    Key: `${Math.random() + file.name}`,
-    Body: file,
-  };
-
-  try {
-    const upload: any = s3.putObject(params);
-
-    upload.on("httpUploadProgress", (evt: any) => {
-      console.log(
-        `Uploading ${(evt.loaded * 100) / evt.total}%`
-      );
-    });
-
-    await upload.promise();
-    console.log("File uploaded successfully.");
-  } catch (err) {
-    console.error(err);
-  }
-
-  // var upload = s3
-  //   .putObject(params)
-  //   .on("httpUploadProgress", (evt: any) => {
-  //     console.log(
-  //       `Uploading ${(evt.loaded * 100) / evt.total}%`
-  //     );
-  //   })
-  //   .promise();
-
-  // await upload.then((err, data) => {
-  //   console.log(err);
-  //   alert("File uploaded successfully.");
-  // });
-};
 
 const CreatePost: React.FC<Props> = ({
   placeholder
@@ -110,7 +61,7 @@ const CreatePost: React.FC<Props> = ({
     inputFileRef.current!.click()
   }
 
-  function handleFileInputChange(e: any) {
+  async function handleFileInputChange(e: any) {
     const selectedFiles = e.target.files
     if (selectedFiles.length > 4) {
       alert("이미지 파일은 최대 4장까지 업로드 가능합니다.")
@@ -120,20 +71,48 @@ const CreatePost: React.FC<Props> = ({
       alert("이미지 파일은 최대 4장까지 업로드 가능합니다.")
       return;
     }
-    debugger
-    // selectedFiles.map((file: any) => {
-    //   uploadFile(file)
-    // })
-    for (const file of selectedFiles) {
-      uploadFile(file)
+
+    if (!process.env.NEXT_PUBLIC_AWS_S3_REGION || !process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || !process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY) return
+
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
+    const bucketRegion = process.env.NEXT_PUBLIC_AWS_S3_REGION
+
+    const s3Client = new S3Client({
+      region: bucketRegion,
+      credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+      }
+    });
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      console.log(`key: ${uuidv4()}_${selectedFiles[i].name}`)
+      const fileKey = `${uuidv4()}_${selectedFiles[i].name}`
+      const params = {
+        Bucket: bucketName,
+        Key: fileKey,
+        Body: selectedFiles[i],
+      };
+
+      s3Client.send(new PutObjectCommand(params), (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(data);
+          const newFile = {
+            url: `https://s3.${bucketRegion}.amazonaws.com/${bucketName}/${fileKey}`,
+            filename: fileKey
+          }
+          setFileData([...fileData, newFile])
+
+        }
+      });
     }
-    /*
-    case1: fileData.length == 0  
-    */
   }
 
   return (
     <div className="border-b-[1px] border-gray-500 py-2">
+      <h1>{JSON.stringify(fileData)}</h1>
       <div className="flex flex-row gap-4">
         <div
           className="h-14 w-14 rounded-full cursor-pointer relative"
@@ -188,34 +167,78 @@ const CreatePost: React.FC<Props> = ({
         </div>
       </div>
     </div >
-    // <div className="flex flex-col">
-    //   <div className="flex flex-row">
-    //     <div>
-    //       <Image
-    //         src="https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-3.jpg"
-    //         alt="profile img"
-    //         width={100}
-    //         height={40}
-    //         objectFit="contain"
-    //       />
-    //     </div>
-    //     <div>
-    //       <Textarea />
-    //     </div>
-    //   </div>
-
-    //   <div className="flex flex-row">
-    //     <div>
-    //       img icon
-    //     </div>
-    //     <div>
-    //       button area
-    //     </div>
-    //   </div>
-    // </div>
   )
 
     ;
 }
 
 export default CreatePost;
+
+
+// async function getFileData(key: string) {
+//   const S3_BUCKET = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
+//   const REGION = process.env.NEXT_PUBLIC_AWS_S3_REGION;
+
+//   const s3 = new AWS.S3({
+//     params: { Bucket: S3_BUCKET },
+//     region: REGION,
+//   });
+
+//   var getParams: any = {
+//     Bucket: S3_BUCKET,
+//     Key: key
+//   }
+
+//   s3.getObject(getParams, function (err, data) {
+//     if (err) {
+//       return err;
+//     }
+//     let objectData = data.Body!.toString('utf-8');
+//     debugger
+//     console.log(objectData);
+//   });
+// }
+
+// function uploadFile(file: File) {
+//   const S3_BUCKET = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
+//   const REGION = process.env.NEXT_PUBLIC_AWS_S3_REGION;
+
+//   AWS.config.update({
+//     accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+//   });
+//   const s3 = new AWS.S3({
+//     params: { Bucket: S3_BUCKET },
+//     region: REGION,
+//   });
+
+//   const fileKey = `${Math.random() + file.name}`
+
+//   const params: any = {
+//     Bucket: S3_BUCKET,
+//     Key: fileKey,
+//     Body: file,
+//   };
+
+//   try {
+//     const upload: any = s3.putObject(params);
+
+//     upload.on("httpUploadProgress", (evt: any) => {
+//       console.log(
+//         `Uploading ${(evt.loaded * 100) / evt.total}%`
+//       );
+//     });
+
+//     upload.promise()
+//       .then((data: any) => {
+//         console.log("Upload success");
+//         console.log("data.location : ", data.location);
+
+//       }, (err: any) => {
+//         throw err;
+//       });
+//   } catch (err) {
+//     console.error(err);
+//   }
+
+// };
