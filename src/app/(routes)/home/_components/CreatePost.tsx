@@ -13,9 +13,10 @@ interface Props {
   placeholder: string;
 }
 
-interface remoteFile {
+interface IFileEl {
   filename: string,
   url: string,
+  ord?: number
 }
 
 const CreatePost: React.FC<Props> = ({
@@ -23,30 +24,21 @@ const CreatePost: React.FC<Props> = ({
 }) => {
   const { data: session } = useSession()
   const [content, setContent] = useState('')
-  const [fileData, setFileData] = useState<remoteFile[]>([])
+  const [fileData, setFileData] = useState<IFileEl[]>([])
 
   const inputFileRef: React.RefObject<HTMLInputElement> = useRef(null)
 
   const onSubmit = async () => {
     try {
-      await axios.post('/api/post/create', {
-        content: content,
-        userId: Number(session?.user.id)
-      })
+      const fileList = fileData.map((el: IFileEl, idx: number) => ({ ...el, ord: idx }))
 
-      // const res = await fetch(
-      //   '/api/post/create', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     content: content,
-      //     userId: 3,
-      //   })
-      // }
-      // )
-      // setContent('')
+      const response = await axios.post('/api/post/create', {
+        content: content,
+        userId: Number(session?.user.id),
+        fileList: fileList
+      })
+      console.log("post response : ", response)
+
     } catch (error) {
       console.log(error)
     }
@@ -85,6 +77,8 @@ const CreatePost: React.FC<Props> = ({
       }
     });
 
+    let newArr: any[] = []
+    let cnt = 0;
     for (let i = 0; i < selectedFiles.length; i++) {
       console.log(`key: ${uuidv4()}_${selectedFiles[i].name}`)
       const fileKey = `${uuidv4()}_${selectedFiles[i].name}`
@@ -103,11 +97,16 @@ const CreatePost: React.FC<Props> = ({
             url: `https://s3.${bucketRegion}.amazonaws.com/${bucketName}/${fileKey}`,
             filename: fileKey
           }
-          setFileData([...fileData, newFile])
+          newArr.push(newFile)
+          cnt++
+          if (cnt === selectedFiles.length) {
 
+            setFileData([...fileData, ...newArr])
+          }
         }
       });
     }
+
   }
 
   function removeFile(idx: number) {
@@ -155,7 +154,7 @@ const CreatePost: React.FC<Props> = ({
               fileData.length > 0 && fileData.map((el: any, idx: number) => {
                 return (
                   <div className="w-full relative" key={el.url}>
-                    <img src="/assets/icons/close.svg" className="absolute top-3 right-3" width={32}
+                    <img src="/assets/icons/close.svg" className="cursor-pointer absolute top-3 right-3" width={32}
                       onClick={() => removeFile(idx)}
                     />
                     <img src={el.url} className="w-full" />
@@ -171,7 +170,7 @@ const CreatePost: React.FC<Props> = ({
                 width={40} height={40}
                 onClick={handleFileButton}
               />
-              <input type="file" className="hidden" ref={inputFileRef}
+              <input type="file" className="hidden" ref={inputFileRef} multiple
                 onChange={handleFileInputChange}
               />
 
@@ -211,7 +210,6 @@ export default CreatePost;
 //       return err;
 //     }
 //     let objectData = data.Body!.toString('utf-8');
-//     debugger
 //     console.log(objectData);
 //   });
 // }

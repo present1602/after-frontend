@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <main className='flex'> {/* flex h-screen? */}
+          <main className='flex'>
             <Topbar />
             <LeftSidebar />
             <section className='main-container'>
