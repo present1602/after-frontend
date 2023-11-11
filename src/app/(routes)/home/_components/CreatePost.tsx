@@ -114,8 +114,7 @@ const CreatePost: React.FC<Props> = ({
   }
 
   return (
-    <div className="border-b-[1px] border-gray-500 py-2">
-      <h1>{JSON.stringify(fileData)}</h1>
+    <div className="border-b-[1px] border-dark-4 pt-2 py-5">
       <div className="flex flex-row gap-4">
         <div
           className="h-14 w-14 rounded-full cursor-pointer relative"

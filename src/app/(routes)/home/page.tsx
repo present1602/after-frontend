@@ -3,7 +3,8 @@
 import axios from "axios";
 import CreatePost from "./_components/CreatePost";
 import { useEffect, useState } from "react";
-import PostCard from "./_components/PostCard";
+import PostCard from "./_components/post/PostCard";
+import LayerBackground from "@/components/shared/LayerBackground";
 
 
 
@@ -45,6 +46,9 @@ const Home = () => {
           return <PostCard key={Math.random()} post={post} />
         })
       }
+      <LayerBackground>
+        <h1>in layer</h1>
+      </LayerBackground>
     </div>
 
   );
