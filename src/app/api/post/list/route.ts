@@ -1,22 +1,26 @@
 import { prisma } from "@/lib/db";
+import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import { NextResponse } from "next/server";
 
 
+// const { searchParams } = new URL(req.url);
+// const pageCount = searchParams.get("page");
+
+// const router = useRouter()
+// const { page } = router.query
+
+// const pageNumber = Number(page) || 1;
 export async function GET(req: Request) {
-  // const { searchParams } = new URL(req.url);
-  // const pageCount = searchParams.get("page");
+  const url = new URL(req.url)
+  const searchParams = new URLSearchParams(url.search)
+  const page = searchParams.get("page")
 
-  // const router = useRouter()
-  // const { page } = router.query
-
-  // const pageNumber = Number(page) || 1;
-
-  const page = 1
+  let pageNumber = Number(page) || 1
 
   const posts = await prisma.post.findMany({
-    skip: 0 + (page - 1) * 20,
-    take: 20,
+    skip: 0 + (pageNumber - 1) * 3,
+    take: 3,
     orderBy: { created_at: "desc" },
     select: {
       content: true,

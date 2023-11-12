@@ -5,6 +5,7 @@ import CreatePost from "./_components/CreatePost";
 import { useEffect, useState } from "react";
 import PostCard from "./_components/post/PostCard";
 import LayerBackground from "@/components/shared/LayerBackground";
+import ReplyContentContainer from "./_components/reply/ContentContainer";
 
 
 
@@ -36,7 +37,6 @@ const Home = () => {
     loadMorePosts()
   }, [])
 
-  // setBeers((prevProducts: Beer[]) => [...prevProducts, ...newProducts]);
   return (
     <div className="w-full">
 
@@ -46,12 +46,12 @@ const Home = () => {
           return <PostCard key={Math.random()} post={post} />
         })
       }
-      <LayerBackground>
-        <h1>in layer</h1>
-      </LayerBackground>
     </div>
-
   );
 }
 
+{/* <LayerBackground>
+  <ReplyContentContainer postId={3}/>
+  <h1>in layer</h1>
+</LayerBackground> */}
 export default Home;
