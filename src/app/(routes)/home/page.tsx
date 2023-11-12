@@ -37,7 +37,10 @@ const Home = () => {
     }
   };
 
-
+  const initPosts = async () => {
+    const postList = await fetchPosts(0)
+    setPosts(postList.data)
+  }
   useEffect(() => {
     loadMorePosts()
   }, [])
@@ -45,7 +48,7 @@ const Home = () => {
   return (
     <div className="w-full">
 
-      <CreatePost placeholder="" />
+      <CreatePost placeholder="" initPosts={() => initPosts()} />
       <InfiniteScroll
         dataLength={posts.length}
         next={loadMorePosts}

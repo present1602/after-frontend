@@ -19,9 +19,7 @@ interface IFileEl {
   ord?: number
 }
 
-const CreatePost: React.FC<Props> = ({
-  placeholder
-}) => {
+const CreatePost: React.FC<any> = (props) => {
   const { data: session } = useSession()
   const [content, setContent] = useState('')
   const [fileData, setFileData] = useState<IFileEl[]>([])
@@ -39,8 +37,23 @@ const CreatePost: React.FC<Props> = ({
       })
       console.log("post response : ", response)
 
+      if (response.status === 200) {
+        alert(response.data.message)
+
+        props.initPosts()
+        // window.scrollTo({
+        //   top: 0,
+        //   behavior: 'smooth'
+        // })
+
+
+      } else {
+        alert(`포스팅 등록에 실패했습니다. \n${response.data.message}`)
+      }
+
     } catch (error) {
       console.log(error)
+      alert('포스팅 등록에 실패했습니다.')
     }
 
   }
