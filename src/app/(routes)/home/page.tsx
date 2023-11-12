@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import PostCard from "./_components/post/PostCard";
 import LayerBackground from "@/components/shared/LayerBackground";
 import ReplyContentContainer from "./_components/reply/ContentContainer";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 
-
-async function fetchPosts(page: number) {
+async function fetchPosts(start: number) {
   const perPage = 20;
-  const apiUrl = `/api/post/list?page=${page}`;
+  const apiUrl = `/api/post/list?_start=${start}`;
   try {
     const response = await axios.get(apiUrl);
     console.log(response)
@@ -26,10 +26,15 @@ async function fetchPosts(page: number) {
 const Home = () => {
 
   const [posts, setPosts] = useState<any[]>([])
+  const [hasMore, setHasMore] = useState(true)
 
   const loadMorePosts = async () => {
-    const postList = (await fetchPosts(1)) ?? [];
-    setPosts(postList.data)
+    const postList = (await fetchPosts(posts.length)) ?? [];
+
+    setPosts([...posts, ...postList.data])
+    if (postList.data.length < 3) {
+      setHasMore(false)
+    }
   };
 
 
@@ -41,11 +46,19 @@ const Home = () => {
     <div className="w-full">
 
       <CreatePost placeholder="" />
-      {
-        posts.length > 0 && posts.map((post: any) => {
-          return <PostCard key={Math.random()} post={post} />
-        })
-      }
+      <InfiniteScroll
+        dataLength={posts.length}
+        next={loadMorePosts}
+        hasMore={hasMore}
+        loader={<h4 className="text-white py-3 text-center">Loading...</h4>}
+        endMessage={<h4 className="text-white py-3 text-center">마지막 포스트입니다.</h4>}
+      >
+        {
+          posts.length > 0 && posts.map((post: any) => {
+            return <PostCard key={Math.random()} post={post} />
+          })
+        }
+      </InfiniteScroll>
     </div>
   );
 }
