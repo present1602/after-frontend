@@ -21,7 +21,7 @@ export async function GET(req: Request) {
   const posts = await prisma.post.findMany({
     // skip: 0 + (pageNumber - 1) * 3,
     skip: start,
-    take: 3,
+    take: 6,
     orderBy: { created_at: "desc" },
     select: {
       content: true,
