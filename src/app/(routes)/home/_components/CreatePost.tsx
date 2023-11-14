@@ -39,13 +39,7 @@ const CreatePost: React.FC<any> = (props) => {
 
       if (response.status === 200) {
         alert(response.data.message)
-
         props.initPosts()
-        // window.scrollTo({
-        //   top: 0,
-        //   behavior: 'smooth'
-        // })
-
 
       } else {
         alert(`포스팅 등록에 실패했습니다. \n${response.data.message}`)

@@ -28,8 +28,6 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const queryClient = useQueryClient()
-
   const loadMorePosts = async () => {
     const postList = (await fetchPosts(currentPage)) ?? [];
     return postList.data
@@ -69,6 +67,16 @@ const Home = () => {
 
   function handleLoad() {
     setCurrentPage(currentPage + 1)
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full">
+        <div className="text-center max-w-2xl h3-semibold text-white">
+          콘텐츠를 가져오는 도중 에러가 발생했습니다.
+        </div>
+      </div>
+    )
   }
 
   return (
