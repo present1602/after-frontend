@@ -1,11 +1,11 @@
 "use client"
 
+import LayerBackground from "@/components/shared/LayerBackground";
+import ReplyContentContainer from "./_components/reply/ContentContainer";
 import axios from "axios";
 import CreatePost from "./_components/CreatePost";
 import { useEffect, useState } from "react";
 import PostCard from "./_components/post/PostCard";
-import LayerBackground from "@/components/shared/LayerBackground";
-import ReplyContentContainer from "./_components/reply/ContentContainer";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -38,13 +38,20 @@ const Home = () => {
   const { data, isLoading, isError } = useQuery(
     {
       queryKey: ['posts', currentPage],
-      queryFn: loadMorePosts
+      queryFn: async () => {
+        if (currentPage !== 1) {
+          return await loadMorePosts();
+        }
+        return null;
+      }
     }
   )
 
   const initPosts = async () => {
     const postList = await fetchPosts(1)
     setPosts(postList.data)
+    setCurrentPage(1)
+    !hasMore && setHasMore(true)
   }
 
   useEffect(() => {
@@ -85,8 +92,8 @@ const Home = () => {
   );
 }
 
+export default Home;
 {/* <LayerBackground>
   <ReplyContentContainer postId={3}/>
   <h1>in layer</h1>
 </LayerBackground> */}
-export default Home;
