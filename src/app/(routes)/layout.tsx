@@ -5,7 +5,8 @@ import Topbar from '@/components/layout/Topbar'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import Bottombar from '@/components/layout/Bottombar'
 import RightSidebar from '@/components/layout/RightSidebar'
-import AuthProvider from '../context/AuthProvider'
+import AuthProvider from '../../lib/AuthProvider'
+import ReactQueryProvider from '@/lib/ReactQueryProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,19 +23,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <main className='flex'>
-            <Topbar />
-            <LeftSidebar />
-            <section className='main-container'>
-              <div className='w-full max-w-screen-sm'>
-                {children}
-              </div>
-            </section>
-            <RightSidebar />
-          </main>
-          <Bottombar />
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <main className='flex'>
+              <Topbar />
+              <LeftSidebar />
+              <section className='main-container'>
+                <div className='w-full max-w-screen-sm'>
+                  {children}
+                </div>
+              </section>
+              <RightSidebar />
+            </main>
+            <Bottombar />
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   )

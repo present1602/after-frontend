@@ -14,13 +14,13 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const searchParams = new URLSearchParams(url.search)
-  const _start = searchParams.get("_start")
+  const page = searchParams.get("_page")
 
-  let start = Number(_start) || 0
+  let pageNumber = Number(page) || 1
 
   const posts = await prisma.post.findMany({
-    // skip: 0 + (pageNumber - 1) * 3,
-    skip: start,
+    skip: 0 + (pageNumber - 1) * 6,
+    // skip: start,
     take: 6,
     orderBy: { created_at: "desc" },
     select: {
