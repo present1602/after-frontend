@@ -18,6 +18,12 @@ export async function GET(req: Request) {
 
   let pageNumber = Number(page) || 1
 
+  const perPage = 6
+  const totalCount = await prisma.post.count()
+
+  const totalPage = Math.ceil(totalCount / perPage)
+
+
   const posts = await prisma.post.findMany({
     skip: 0 + (pageNumber - 1) * 6,
     // skip: start,
@@ -60,6 +66,6 @@ export async function GET(req: Request) {
     }
   });
 
-  return NextResponse.json({ data: posts }, { status: 200 });
+  return NextResponse.json({ list: posts, total_page: totalPage, page: pageNumber }, { status: 200 });
 
 };

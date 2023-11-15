@@ -107,7 +107,6 @@ const CreatePost: React.FC<any> = (props) => {
           newArr.push(newFile)
           cnt++
           if (cnt === selectedFiles.length) {
-
             setFileData([...fileData, ...newArr])
           }
         }

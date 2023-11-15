@@ -6,11 +6,11 @@ import axios from "axios";
 import CreatePost from "./_components/CreatePost";
 import { useEffect, useState } from "react";
 import PostCard from "./_components/post/PostCard";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import InfiniteScroll from "react-infinite-scroller";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
-async function fetchPosts(page: number) {
-  const apiUrl = `/api/post/list?_page=${page}`;
+async function fetchPosts({ pageParam = 1 }: { pageParam: number }) {
+  const apiUrl = `/api/post/list?_page=${pageParam}`;
   try {
     const response = await axios.get(apiUrl);
     console.log(response)
@@ -29,45 +29,59 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const loadMorePosts = async () => {
-    const postList = (await fetchPosts(currentPage)) ?? [];
+    const postList = (await fetchPosts({ pageParam: currentPage })) ?? [];
     return postList.data
   };
 
-  const { data, isLoading, isError } = useQuery(
+  // const { data, isLoading, isError } = useQuery(
+  //   {
+  //     queryKey: ['posts', currentPage],
+  //     queryFn: async () => {
+  //       if (currentPage !== 1) {
+  //         return await loadMorePosts();
+  //       }
+  //       return null;
+  //     }
+  //   }
+  // )
+  async function fetchPage(page: any) {
+    // const response: any = await fetch(`/api/post/list?_page=${page}`)
+    // return response.data
+    const apiUrl = `/api/post/list?_page=${page}`;
+
+    try {
+      // const response = await axios.get(apiUrl);
+      const response = await fetch(apiUrl);
+      console.log("fetch res : ", response)
+      return response.json();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+
+  }
+
+  interface IPost {
+    content: string,
+    created_at: string,
+  }
+  interface IResponse {
+    list: any[],
+    page: number,
+    total_page: number
+  }
+
+  const { data, fetchNextPage, hasNextPage, isError, error } = useInfiniteQuery<IResponse>(
     {
-      queryKey: ['posts', currentPage],
-      queryFn: async () => {
-        if (currentPage !== 1) {
-          return await loadMorePosts();
-        }
-        return null;
+      queryKey: ['posts'],
+      queryFn: ({ pageParam }) => fetchPage(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPosts) => {
+        return lastPage.page !== lastPage.total_page ? lastPage.page + 1 : undefined;
       }
     }
   )
 
-  const initPosts = async () => {
-    const postList = await fetchPosts(1)
-    setPosts(postList.data)
-    setCurrentPage(1)
-    !hasMore && setHasMore(true)
-  }
-
-  useEffect(() => {
-    initPosts()
-  }, [])
-
-  useEffect(() => {
-    if (!isLoading && data && data.length > 0) {
-      setPosts([...posts, ...data])
-      if (data.length < 6) {
-        setHasMore(false)
-      }
-    }
-  }, [data, isLoading])
-
-  function handleLoad() {
-    setCurrentPage(currentPage + 1)
-  }
 
   if (isError) {
     return (
@@ -75,8 +89,15 @@ const Home = () => {
         <div className="text-center max-w-2xl h3-semibold text-white">
           콘텐츠를 가져오는 도중 에러가 발생했습니다.
         </div>
+        <p className="text-center max-w-2xl text-white">
+          {error.toString()}
+        </p>
       </div>
     )
+  }
+
+  function initPosts() {
+
   }
 
   return (
@@ -84,16 +105,19 @@ const Home = () => {
 
       <CreatePost placeholder="" initPosts={() => initPosts()} />
       <InfiniteScroll
-        dataLength={posts.length}
-        next={handleLoad}
-        hasMore={hasMore}
-        loader={<h4 className="text-white py-3 text-center">Loading...</h4>}
-        endMessage={<h4 className="text-white py-3 text-center">마지막 포스트입니다.</h4>}
+        pageStart={0}
+        loadMore={() => fetchNextPage()}
+        hasMore={hasNextPage}
+        loader={<div className="loader" key={0}>Loading ...</div>}
       >
         {
-          posts.length > 0 && posts.map((post: any) => {
-            return <PostCard key={Math.random()} post={post} />
+          data ? data.pages.map((pageData) => {
+            return pageData.list.map((post) => {
+              return (
+                <PostCard key={Math.random()} post={post} />)
+            })
           })
+            : <></>
         }
       </InfiniteScroll>
     </div>
